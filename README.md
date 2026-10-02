@@ -4,6 +4,13 @@ CSE341 Web Services
 
 ---
 
+## Live Render Deployment
+
+- **Base URL:** [https://movies-api-j8pw.onrender.com](https://movies-api-j8pw.onrender.com)
+- **API Documentation (Swagger UI):** [https://movies-api-j8pw.onrender.com/api-docs](https://movies-api-j8pw.onrender.com/api-docs)
+
+---
+
 ## Project Overview
 
 The Movies & Reviews REST API is a web service built with Node.js, Express, and MongoDB. The application manages two related data collections: **movies** and **reviews**. It provides full Create, Read, Update, and Delete (CRUD) capabilities, accompanied by strict input validation, comprehensive error handling, and interactive Swagger/OpenAPI documentation.
@@ -159,14 +166,19 @@ Open the included `routes.rest` file and click `Send Request` above any route to
 
 ## Deployment to Render
 
+The API is actively deployed on Render:
+- **Production URL:** [https://movies-api-j8pw.onrender.com](https://movies-api-j8pw.onrender.com)
+- **Interactive Documentation:** [https://movies-api-j8pw.onrender.com/api-docs](https://movies-api-j8pw.onrender.com/api-docs)
+
+### Deployment Steps:
 1. Push this repository to GitHub.
 2. Log in to your Render dashboard and create a new **Web Service**.
-3. Connect your GitHub repository.
+3. Connect your GitHub repository (`movies-api`).
 4. Set the following build and start configurations:
    - **Build Command:** `npm install`
    - **Start Command:** `node server.js`
-5. Under **Environment Variables**, add:
+5. Under **Environment Variables**, configure:
    - `MONGODB_URI`: your MongoDB Atlas connection string
    - `DB_NAME`: `movies_db`
-   - `PORT`: `3000` (or leave default, Render sets this automatically)
-6. Once deployed, update `host` in `swagger.js` with your Render URL (for example: `your-app-name.onrender.com`), change scheme to `https`, rerun `npm run swagger`, and push changes to GitHub.
+   - `PORT`: `3000` (Render assigns this dynamically in production)
+   - `HOST`: `movies-api-j8pw.onrender.com` (optional override)

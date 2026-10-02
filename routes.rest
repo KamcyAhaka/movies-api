@@ -1,5 +1,13 @@
-### Localhost Environment Base URL
-@baseUrl = http://localhost:3000
+### ===========================================================
+### ENVIRONMENT SELECTION
+### ===========================================================
+### Uncomment the active environment URL:
+
+### 1. Render Production Deployment
+@baseUrl = https://movies-api-j8pw.onrender.com
+
+### 2. Localhost Development
+# @baseUrl = http://localhost:3000
 
 ### -----------------------------------------------------------
 ### MOVIES ENDPOINTS
