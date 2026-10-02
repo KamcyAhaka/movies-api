@@ -1,0 +1,50 @@
+const swaggerAutogen = require('swagger-autogen')();
+
+const doc = {
+  info: {
+    title: 'Movies & Reviews API',
+    description: 'CSE341 Web Services API for managing movies and reviews with MongoDB',
+    version: '1.0.0',
+  },
+  host: process.env.HOST || 'localhost:3000',
+  schemes: ['http', 'https'],
+  tags: [
+    {
+      name: 'Home',
+      description: 'Root endpoint',
+    },
+    {
+      name: 'Movies',
+      description: 'Operations on the movies collection (9 attributes)',
+    },
+    {
+      name: 'Reviews',
+      description: 'Operations on the reviews collection',
+    },
+  ],
+  definitions: {
+    Movie: {
+      title: 'Inception',
+      director: 'Christopher Nolan',
+      releaseYear: 2010,
+      genre: 'Sci-Fi',
+      rating: 8.8,
+      runtime: 148,
+      synopsis: 'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.',
+      language: 'English',
+      posterUrl: 'https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg',
+    },
+    Review: {
+      movieId: '651a2b3c4d5e6f7a8b9c0d1e',
+      reviewerName: 'Alex Johnson',
+      rating: 9,
+      comment: 'Mind-bending visual masterpiece with a brilliant Hans Zimmer score!',
+      reviewDate: '2024-03-15',
+    },
+  },
+};
+
+const outputFile = './swagger-output.json';
+const endpointsFiles = ['./server.js'];
+
+swaggerAutogen(outputFile, endpointsFiles, doc);

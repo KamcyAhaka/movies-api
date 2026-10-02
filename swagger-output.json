@@ -1,0 +1,395 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Movies & Reviews API",
+    "description": "CSE341 Web Services API for managing movies and reviews with MongoDB",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Home",
+      "description": "Root endpoint"
+    },
+    {
+      "name": "Movies",
+      "description": "Operations on the movies collection (9 attributes)"
+    },
+    {
+      "name": "Reviews",
+      "description": "Operations on the reviews collection"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "Home"
+        ],
+        "description": "API root endpoint",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/movies/": {
+      "get": {
+        "tags": [
+          "Movies"
+        ],
+        "description": "Retrieve all movies from the database",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all movies"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Movies"
+        ],
+        "description": "Create a new movie document with 9 required attributes",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Movie payload",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Movie"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Movie created successfully"
+          },
+          "400": {
+            "description": "Validation failed or missing required fields"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/movies/{id}": {
+      "get": {
+        "tags": [
+          "Movies"
+        ],
+        "description": "Retrieve a single movie by its MongoDB ObjectId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Movie ObjectId (24 hex characters)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the movie"
+          },
+          "400": {
+            "description": "Invalid movie ID format"
+          },
+          "404": {
+            "description": "Movie not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Movies"
+        ],
+        "description": "Update an existing movie document by its MongoDB ObjectId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Movie ObjectId (24 hex characters)"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Updated movie payload",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Movie"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Movie updated successfully"
+          },
+          "400": {
+            "description": "Validation failed or invalid ID format"
+          },
+          "404": {
+            "description": "Movie not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Movies"
+        ],
+        "description": "Delete a movie document by its MongoDB ObjectId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Movie ObjectId (24 hex characters)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movie deleted successfully"
+          },
+          "400": {
+            "description": "Invalid movie ID format"
+          },
+          "404": {
+            "description": "Movie not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/reviews/": {
+      "get": {
+        "tags": [
+          "Reviews"
+        ],
+        "description": "Retrieve all reviews from the database",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all reviews"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Reviews"
+        ],
+        "description": "Create a new movie review",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Review payload",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Review"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Review created successfully"
+          },
+          "400": {
+            "description": "Validation failed or missing required fields"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/reviews/{id}": {
+      "get": {
+        "tags": [
+          "Reviews"
+        ],
+        "description": "Retrieve a single review by its MongoDB ObjectId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Review ObjectId (24 hex characters)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the review"
+          },
+          "400": {
+            "description": "Invalid review ID format"
+          },
+          "404": {
+            "description": "Review not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Reviews"
+        ],
+        "description": "Update an existing review by its MongoDB ObjectId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Review ObjectId (24 hex characters)"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Updated review payload",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Review"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Review updated successfully"
+          },
+          "400": {
+            "description": "Validation failed or invalid ID format"
+          },
+          "404": {
+            "description": "Review not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Reviews"
+        ],
+        "description": "Delete a review by its MongoDB ObjectId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Review ObjectId (24 hex characters)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Review deleted successfully"
+          },
+          "400": {
+            "description": "Invalid review ID format"
+          },
+          "404": {
+            "description": "Review not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Movie": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "Inception"
+        },
+        "director": {
+          "type": "string",
+          "example": "Christopher Nolan"
+        },
+        "releaseYear": {
+          "type": "number",
+          "example": 2010
+        },
+        "genre": {
+          "type": "string",
+          "example": "Sci-Fi"
+        },
+        "rating": {
+          "type": "number",
+          "example": 8.8
+        },
+        "runtime": {
+          "type": "number",
+          "example": 148
+        },
+        "synopsis": {
+          "type": "string",
+          "example": "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O."
+        },
+        "language": {
+          "type": "string",
+          "example": "English"
+        },
+        "posterUrl": {
+          "type": "string",
+          "example": "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg"
+        }
+      }
+    },
+    "Review": {
+      "type": "object",
+      "properties": {
+        "movieId": {
+          "type": "string",
+          "example": "651a2b3c4d5e6f7a8b9c0d1e"
+        },
+        "reviewerName": {
+          "type": "string",
+          "example": "Alex Johnson"
+        },
+        "rating": {
+          "type": "number",
+          "example": 9
+        },
+        "comment": {
+          "type": "string",
+          "example": "Mind-bending visual masterpiece with a brilliant Hans Zimmer score!"
+        },
+        "reviewDate": {
+          "type": "string",
+          "example": "2024-03-15"
+        }
+      }
+    }
+  }
+}
