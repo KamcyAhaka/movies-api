@@ -6,8 +6,8 @@ const doc = {
     description: 'CSE341 Web Services API for managing movies and reviews with MongoDB',
     version: '1.0.0',
   },
-  host: process.env.HOST || 'localhost:3000',
-  schemes: ['http', 'https'],
+  host: process.env.HOST || 'movies-api-j8pw.onrender.com',
+  schemes: ['https', 'http'],
   tags: [
     {
       name: 'Home',

@@ -13,6 +13,9 @@ try {
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Enable reverse proxy support for deployments (e.g. Render)
+app.enable('trust proxy');
+
 // Middleware
 app.use(express.json());
 
@@ -31,7 +34,16 @@ app.use((req, res, next) => {
 });
 
 // Swagger Documentation route
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api-docs', swaggerUi.serve, (req, res, next) => {
+  const host = req.get('host');
+  const isLocal = host && host.includes('localhost');
+  const dynamicDoc = {
+    ...swaggerDocument,
+    host: host || swaggerDocument.host,
+    schemes: isLocal ? ['http', 'https'] : ['https', 'http'],
+  };
+  return swaggerUi.setup(dynamicDoc)(req, res, next);
+});
 
 // Mount application routes
 app.use('/', routes);
