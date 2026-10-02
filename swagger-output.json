@@ -219,6 +219,9 @@
           "400": {
             "description": "Validation failed or missing required fields"
           },
+          "404": {
+            "description": "Referenced movie not found"
+          },
           "500": {
             "description": "Internal server error"
           }

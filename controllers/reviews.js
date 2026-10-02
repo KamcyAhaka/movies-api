@@ -2,6 +2,7 @@ const mongodb = require('../db/connect');
 const { ObjectId } = require('mongodb');
 
 const COLLECTION_NAME = 'reviews';
+const MOVIES_COLLECTION = 'movies';
 
 // Helper: validate review payload
 const validateReviewPayload = (body) => {
@@ -77,6 +78,19 @@ const createReview = async (req, res) => {
 
     const { movieId, reviewerName, rating, comment, reviewDate } = req.body;
 
+    // Verify that the referenced movie exists in the database
+    const movie = await mongodb
+      .getDb()
+      .collection(MOVIES_COLLECTION)
+      .findOne({ _id: new ObjectId(movieId) });
+
+    if (!movie) {
+      return res.status(404).json({
+        error: 'Movie not found',
+        details: `Cannot create review. No movie found with ID: ${movieId}`,
+      });
+    }
+
     const newReview = {
       movieId,
       reviewerName: reviewerName.trim(),
@@ -114,6 +128,19 @@ const updateReview = async (req, res) => {
     }
 
     const { movieId, reviewerName, rating, comment, reviewDate } = req.body;
+
+    // Verify that the referenced movie exists in the database
+    const movie = await mongodb
+      .getDb()
+      .collection(MOVIES_COLLECTION)
+      .findOne({ _id: new ObjectId(movieId) });
+
+    if (!movie) {
+      return res.status(404).json({
+        error: 'Movie not found',
+        details: `Cannot update review. No movie found with ID: ${movieId}`,
+      });
+    }
 
     const updatedReview = {
       movieId,

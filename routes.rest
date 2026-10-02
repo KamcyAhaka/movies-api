@@ -80,15 +80,27 @@ GET {{baseUrl}}/reviews HTTP/1.1
 ### 8. Get single review by ID (replace with a real review ID)
 GET {{baseUrl}}/reviews/651a2b3c4d5e6f7a8b9c0d2f HTTP/1.1
 
-### 9. Create a new review
+### 9. Create a new review (movieId must reference an existing movie document)
 POST {{baseUrl}}/reviews HTTP/1.1
 Content-Type: application/json
 
 {
-  "movieId": "651a2b3c4d5e6f7a8b9c0d1e",
+  "movieId": "6abfa2afabea0890dfb9be26",
   "reviewerName": "Sarah Connor",
   "rating": 10,
   "comment": "An extraordinary journey through space and time. Emotional and scientifically thoughtful.",
+  "reviewDate": "2024-04-12"
+}
+
+### 9b. Create review with non-existent movie ID (Expected: 404 Movie not found)
+POST {{baseUrl}}/reviews HTTP/1.1
+Content-Type: application/json
+
+{
+  "movieId": "000000000000000000000000",
+  "reviewerName": "Sarah Connor",
+  "rating": 8,
+  "comment": "Testing non-existent movie validation",
   "reviewDate": "2024-04-12"
 }
 

@@ -38,6 +38,7 @@ router.post(
   } */
   // #swagger.responses[201] = { description: 'Review created successfully' }
   // #swagger.responses[400] = { description: 'Validation failed or missing required fields' }
+  // #swagger.responses[404] = { description: 'Referenced movie not found' }
   // #swagger.responses[500] = { description: 'Internal server error' }
   reviewsController.createReview
 );
