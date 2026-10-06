@@ -10,16 +10,58 @@
 # @baseUrl = http://localhost:3000
 
 ### -----------------------------------------------------------
+### AUTHENTICATION & SECURITY ENDPOINTS (Week 04 / Phase 2)
+### -----------------------------------------------------------
+
+### 1. Check current authentication status (logged out: loggedIn = false)
+GET {{baseUrl}}/auth/status HTTP/1.1
+
+### 2. Register a new user account (Password hashed with bcrypt)
+POST {{baseUrl}}/auth/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "filmfanatic",
+  "email": "filmfanatic@example.com",
+  "password": "SecurePassword123!"
+}
+
+### 3. Log in with local credentials (starts session)
+POST {{baseUrl}}/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "filmfanatic@example.com",
+  "password": "SecurePassword123!"
+}
+
+### 4. Check authentication status after logging in (loggedIn = true)
+GET {{baseUrl}}/auth/status HTTP/1.1
+
+### 5. View Protected User Profile (Requires authentication)
+### Succeeds with 200 when logged in, returns 401 when logged out
+GET {{baseUrl}}/auth/profile HTTP/1.1
+
+### 6. View My Personal Reviews (Protected view only available when logged in)
+GET {{baseUrl}}/reviews/user/my-reviews HTTP/1.1
+
+### 7. Log out current session
+POST {{baseUrl}}/auth/logout HTTP/1.1
+
+### 8. Attempt accessing Protected Profile after logout (Expected: 401 Unauthorized)
+GET {{baseUrl}}/auth/profile HTTP/1.1
+
+### -----------------------------------------------------------
 ### MOVIES ENDPOINTS
 ### -----------------------------------------------------------
 
-### 1. Get all movies
+### 9. Get all movies (Public access)
 GET {{baseUrl}}/movies HTTP/1.1
 
-### 2. Get single movie by ID (replace with a real ID from your database)
+### 10. Get single movie by ID (Public access - replace with a real ID)
 GET {{baseUrl}}/movies/651a2b3c4d5e6f7a8b9c0d1e HTTP/1.1
 
-### 3. Create a new movie
+### 11. Create a new movie (PROTECTED: Requires login)
 POST {{baseUrl}}/movies HTTP/1.1
 Content-Type: application/json
 
@@ -35,7 +77,7 @@ Content-Type: application/json
   "posterUrl": "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg"
 }
 
-### 4. Create another movie (for testing)
+### 12. Create another movie (PROTECTED: Requires login)
 POST {{baseUrl}}/movies HTTP/1.1
 Content-Type: application/json
 
@@ -51,7 +93,7 @@ Content-Type: application/json
   "posterUrl": "https://m.media-amazon.com/images/M/MV5BMjlmZmI5MDctNDE2YS00YWE5LWE5ZWItZDBhYWQ0NTcxNWRhXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg"
 }
 
-### 5. Update a movie by ID (replace with an inserted movie ID)
+### 13. Update a movie by ID (PROTECTED: Requires login)
 PUT {{baseUrl}}/movies/651a2b3c4d5e6f7a8b9c0d1e HTTP/1.1
 Content-Type: application/json
 
@@ -67,20 +109,20 @@ Content-Type: application/json
   "posterUrl": "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg"
 }
 
-### 6. Delete a movie by ID (replace with an inserted movie ID)
+### 14. Delete a movie by ID (PROTECTED: Requires login)
 DELETE {{baseUrl}}/movies/651a2b3c4d5e6f7a8b9c0d1e HTTP/1.1
 
 ### -----------------------------------------------------------
 ### REVIEWS ENDPOINTS
 ### -----------------------------------------------------------
 
-### 7. Get all reviews
+### 15. Get all reviews (Public access)
 GET {{baseUrl}}/reviews HTTP/1.1
 
-### 8. Get single review by ID (replace with a real review ID)
+### 16. Get single review by ID (Public access - replace with a real review ID)
 GET {{baseUrl}}/reviews/651a2b3c4d5e6f7a8b9c0d2f HTTP/1.1
 
-### 9. Create a new review (movieId must reference an existing movie document)
+### 17. Create a new review (PROTECTED: Requires login)
 POST {{baseUrl}}/reviews HTTP/1.1
 Content-Type: application/json
 
@@ -92,7 +134,7 @@ Content-Type: application/json
   "reviewDate": "2024-04-12"
 }
 
-### 9b. Create review with non-existent movie ID (Expected: 404 Movie not found)
+### 18. Create review with non-existent movie ID (Expected: 404 Movie not found)
 POST {{baseUrl}}/reviews HTTP/1.1
 Content-Type: application/json
 
@@ -104,17 +146,17 @@ Content-Type: application/json
   "reviewDate": "2024-04-12"
 }
 
-### 10. Update a review by ID (replace with an inserted review ID)
+### 19. Update a review by ID (PROTECTED: Requires login)
 PUT {{baseUrl}}/reviews/651a2b3c4d5e6f7a8b9c0d2f HTTP/1.1
 Content-Type: application/json
 
 {
-  "movieId": "651a2b3c4d5e6f7a8b9c0d1e",
+  "movieId": "6abfa2afabea0890dfb9be26",
   "reviewerName": "Sarah Connor",
   "rating": 9.5,
   "comment": "Updated thoughts: still phenomenal on rewatch!",
   "reviewDate": "2024-04-15"
 }
 
-### 11. Delete a review by ID (replace with an inserted review ID)
+### 20. Delete a review by ID (PROTECTED: Requires login)
 DELETE {{baseUrl}}/reviews/651a2b3c4d5e6f7a8b9c0d2f HTTP/1.1
