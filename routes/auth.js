@@ -8,7 +8,7 @@ const { isAuthenticated } = require('../middleware/authenticate');
 router.get(
   '/login',
   // #swagger.tags = ['Authentication']
-  // #swagger.description = 'Initiate GitHub OAuth 2.0 login flow'
+  // #swagger.description = 'Initiate GitHub OAuth 2.0 login. <strong>NOTE:</strong> Do not use "Execute" here in Swagger UI (browser AJAX cannot follow cross-origin redirects to GitHub). Open this direct link in your browser instead: <a href="/login" target="_blank"><strong>Log in with GitHub</strong></a>'
   // #swagger.responses[302] = { description: 'Redirect to GitHub login' }
   (req, res, next) => {
     if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {

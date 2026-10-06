@@ -44,13 +44,6 @@
           "Home"
         ],
         "description": "API root endpoint displaying login status and quick links",
-        "parameters": [
-          {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -63,18 +56,8 @@
         "tags": [
           "Authentication"
         ],
-        "description": "Initiate GitHub OAuth 2.0 login flow",
-        "parameters": [
-          {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          }
-        ],
+        "description": "Initiate GitHub OAuth 2.0 login. <strong>NOTE:</strong> Do not use \"Execute\" here in Swagger UI (browser AJAX cannot follow cross-origin redirects to GitHub). Open this direct link in your browser instead: <a href=\"/login\" target=\"_blank\"><strong>Log in with GitHub</strong></a>",
         "responses": {
-          "200": {
-            "description": "OK"
-          },
           "302": {
             "description": "Redirect to GitHub login"
           },
@@ -90,17 +73,7 @@
           "Authentication"
         ],
         "description": "GitHub OAuth callback URL",
-        "parameters": [
-          {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
           "302": {
             "description": "Redirect to homepage upon successful authentication"
           }
@@ -115,20 +88,12 @@
         "description": "Log out current session and redirect home",
         "parameters": [
           {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "redirect",
             "in": "query",
             "type": "string"
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
           "302": {
             "description": "Redirected to home after session destroy"
           },
@@ -146,11 +111,6 @@
         "description": "Register a new account (passwords hashed with bcrypt)",
         "parameters": [
           {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "description": "User registration credentials",
@@ -161,9 +121,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
           "201": {
             "description": "Account registered successfully"
           },
@@ -186,11 +143,6 @@
         ],
         "description": "Log in with local credentials (bcrypt verification)",
         "parameters": [
-          {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          },
           {
             "name": "body",
             "in": "body",
@@ -223,13 +175,6 @@
           "Authentication"
         ],
         "description": "Log out current API session",
-        "parameters": [
-          {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Successfully logged out"
@@ -246,13 +191,6 @@
           "Authentication"
         ],
         "description": "Check if a user is currently authenticated",
-        "parameters": [
-          {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Current authentication status returned"
@@ -266,13 +204,6 @@
           "Authentication"
         ],
         "description": "View protected user profile (only accessible when logged in)",
-        "parameters": [
-          {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Profile details returned"
@@ -297,13 +228,6 @@
           "Movies"
         ],
         "description": "Retrieve all movies from the database (Public)",
-        "parameters": [
-          {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved all movies"
@@ -320,11 +244,6 @@
         "description": "Create a new movie document with 9 required attributes (Requires authentication)",
         "parameters": [
           {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "description": "Movie payload",
@@ -335,9 +254,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
           "201": {
             "description": "Movie created successfully"
           },
@@ -371,11 +287,6 @@
             "required": true,
             "type": "string",
             "description": "Movie ObjectId (24 hex characters)"
-          },
-          {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
           }
         ],
         "responses": {
@@ -407,11 +318,6 @@
             "description": "Movie ObjectId (24 hex characters)"
           },
           {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "description": "Updated movie payload",
@@ -422,9 +328,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
           "204": {
             "description": "Movie updated successfully"
           },
@@ -459,11 +362,6 @@
             "required": true,
             "type": "string",
             "description": "Movie ObjectId (24 hex characters)"
-          },
-          {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
           }
         ],
         "responses": {
@@ -496,13 +394,6 @@
           "Reviews"
         ],
         "description": "Retrieve all reviews from the database (Public)",
-        "parameters": [
-          {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved all reviews"
@@ -519,11 +410,6 @@
         "description": "Create a new movie review (Requires authentication)",
         "parameters": [
           {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "description": "Review payload",
@@ -534,9 +420,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
           "201": {
             "description": "Review created successfully"
           },
@@ -566,13 +449,6 @@
           "Reviews"
         ],
         "description": "Retrieve reviews created by currently logged-in user (Requires authentication)",
-        "parameters": [
-          {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved user reviews"
@@ -604,11 +480,6 @@
             "required": true,
             "type": "string",
             "description": "Review ObjectId (24 hex characters)"
-          },
-          {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
           }
         ],
         "responses": {
@@ -640,11 +511,6 @@
             "description": "Review ObjectId (24 hex characters)"
           },
           {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "description": "Updated review payload",
@@ -655,9 +521,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
           "204": {
             "description": "Review updated successfully"
           },
@@ -692,11 +555,6 @@
             "required": true,
             "type": "string",
             "description": "Review ObjectId (24 hex characters)"
-          },
-          {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
           }
         ],
         "responses": {
