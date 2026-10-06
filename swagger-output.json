@@ -2,36 +2,55 @@
   "swagger": "2.0",
   "info": {
     "title": "Movies & Reviews API",
-    "description": "CSE341 Web Services API for managing movies and reviews with MongoDB",
-    "version": "1.0.0"
+    "description": "CSE341 Web Services API for managing movies and reviews with MongoDB and OAuth authentication",
+    "version": "2.0.0"
   },
   "host": "movies-api-j8pw.onrender.com",
   "basePath": "/",
   "tags": [
     {
       "name": "Home",
-      "description": "Root endpoint"
+      "description": "Root endpoint and status"
+    },
+    {
+      "name": "Authentication",
+      "description": "OAuth 2.0 and local bcrypt account endpoints"
     },
     {
       "name": "Movies",
-      "description": "Operations on the movies collection (9 attributes)"
+      "description": "Operations on the movies collection (Protected write/update/delete)"
     },
     {
       "name": "Reviews",
-      "description": "Operations on the reviews collection"
+      "description": "Operations on the reviews collection (Protected write/update/delete)"
     }
   ],
   "schemes": [
     "https",
     "http"
   ],
+  "securityDefinitions": {
+    "cookieAuth": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Cookie",
+      "description": "Connect.sid session cookie obtained by authenticating via /login or /auth/login"
+    }
+  },
   "paths": {
     "/": {
       "get": {
         "tags": [
           "Home"
         ],
-        "description": "API root endpoint",
+        "description": "API root endpoint displaying login status and quick links",
+        "parameters": [
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -39,12 +58,252 @@
         }
       }
     },
+    "/login": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Initiate GitHub OAuth 2.0 login flow",
+        "parameters": [
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "302": {
+            "description": "Redirect to GitHub login"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/github/callback": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "GitHub OAuth callback URL",
+        "parameters": [
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "302": {
+            "description": "Redirect to homepage upon successful authentication"
+          }
+        }
+      }
+    },
+    "/logout": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Log out current session and redirect home",
+        "parameters": [
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "redirect",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "302": {
+            "description": "Redirected to home after session destroy"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Register a new account (passwords hashed with bcrypt)",
+        "parameters": [
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "User registration credentials",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegisterUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Account registered successfully"
+          },
+          "400": {
+            "description": "Validation failed"
+          },
+          "409": {
+            "description": "User already exists"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Log in with local credentials (bcrypt verification)",
+        "parameters": [
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Login credentials",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully authenticated"
+          },
+          "400": {
+            "description": "Missing credentials"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Log out current API session",
+        "parameters": [
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully logged out"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/auth/status": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Check if a user is currently authenticated",
+        "parameters": [
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current authentication status returned"
+          }
+        }
+      }
+    },
+    "/auth/profile": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "View protected user profile (only accessible when logged in)",
+        "parameters": [
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile details returned"
+          },
+          "401": {
+            "description": "Unauthorized - Login required"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      }
+    },
     "/movies/": {
       "get": {
         "tags": [
           "Movies"
         ],
-        "description": "Retrieve all movies from the database",
+        "description": "Retrieve all movies from the database (Public)",
+        "parameters": [
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved all movies"
@@ -58,8 +317,13 @@
         "tags": [
           "Movies"
         ],
-        "description": "Create a new movie document with 9 required attributes",
+        "description": "Create a new movie document with 9 required attributes (Requires authentication)",
         "parameters": [
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
+          },
           {
             "name": "body",
             "in": "body",
@@ -71,16 +335,27 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "201": {
             "description": "Movie created successfully"
           },
           "400": {
             "description": "Validation failed or missing required fields"
           },
+          "401": {
+            "description": "Unauthorized - Login required"
+          },
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
       }
     },
     "/movies/{id}": {
@@ -88,7 +363,7 @@
         "tags": [
           "Movies"
         ],
-        "description": "Retrieve a single movie by its MongoDB ObjectId",
+        "description": "Retrieve a single movie by its MongoDB ObjectId (Public)",
         "parameters": [
           {
             "name": "id",
@@ -96,6 +371,11 @@
             "required": true,
             "type": "string",
             "description": "Movie ObjectId (24 hex characters)"
+          },
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -117,7 +397,7 @@
         "tags": [
           "Movies"
         ],
-        "description": "Update an existing movie document by its MongoDB ObjectId",
+        "description": "Update an existing movie document by its MongoDB ObjectId (Requires authentication)",
         "parameters": [
           {
             "name": "id",
@@ -125,6 +405,11 @@
             "required": true,
             "type": "string",
             "description": "Movie ObjectId (24 hex characters)"
+          },
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
           },
           {
             "name": "body",
@@ -137,11 +422,17 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "204": {
             "description": "Movie updated successfully"
           },
           "400": {
             "description": "Validation failed or invalid ID format"
+          },
+          "401": {
+            "description": "Unauthorized - Login required"
           },
           "404": {
             "description": "Movie not found"
@@ -149,13 +440,18 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
       },
       "delete": {
         "tags": [
           "Movies"
         ],
-        "description": "Delete a movie document by its MongoDB ObjectId",
+        "description": "Delete a movie document by its MongoDB ObjectId (Requires authentication)",
         "parameters": [
           {
             "name": "id",
@@ -163,6 +459,11 @@
             "required": true,
             "type": "string",
             "description": "Movie ObjectId (24 hex characters)"
+          },
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -172,13 +473,21 @@
           "400": {
             "description": "Invalid movie ID format"
           },
+          "401": {
+            "description": "Unauthorized - Login required"
+          },
           "404": {
             "description": "Movie not found"
           },
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
       }
     },
     "/reviews/": {
@@ -186,7 +495,14 @@
         "tags": [
           "Reviews"
         ],
-        "description": "Retrieve all reviews from the database",
+        "description": "Retrieve all reviews from the database (Public)",
+        "parameters": [
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved all reviews"
@@ -200,8 +516,13 @@
         "tags": [
           "Reviews"
         ],
-        "description": "Create a new movie review",
+        "description": "Create a new movie review (Requires authentication)",
         "parameters": [
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
+          },
           {
             "name": "body",
             "in": "body",
@@ -213,11 +534,17 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "201": {
             "description": "Review created successfully"
           },
           "400": {
             "description": "Validation failed or missing required fields"
+          },
+          "401": {
+            "description": "Unauthorized - Login required"
           },
           "404": {
             "description": "Referenced movie not found"
@@ -225,7 +552,43 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      }
+    },
+    "/reviews/user/my-reviews": {
+      "get": {
+        "tags": [
+          "Reviews"
+        ],
+        "description": "Retrieve reviews created by currently logged-in user (Requires authentication)",
+        "parameters": [
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved user reviews"
+          },
+          "401": {
+            "description": "Unauthorized - Login required"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
       }
     },
     "/reviews/{id}": {
@@ -233,7 +596,7 @@
         "tags": [
           "Reviews"
         ],
-        "description": "Retrieve a single review by its MongoDB ObjectId",
+        "description": "Retrieve a single review by its MongoDB ObjectId (Public)",
         "parameters": [
           {
             "name": "id",
@@ -241,6 +604,11 @@
             "required": true,
             "type": "string",
             "description": "Review ObjectId (24 hex characters)"
+          },
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -262,7 +630,7 @@
         "tags": [
           "Reviews"
         ],
-        "description": "Update an existing review by its MongoDB ObjectId",
+        "description": "Update an existing review by its MongoDB ObjectId (Requires authentication)",
         "parameters": [
           {
             "name": "id",
@@ -270,6 +638,11 @@
             "required": true,
             "type": "string",
             "description": "Review ObjectId (24 hex characters)"
+          },
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
           },
           {
             "name": "body",
@@ -282,11 +655,17 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "204": {
             "description": "Review updated successfully"
           },
           "400": {
             "description": "Validation failed or invalid ID format"
+          },
+          "401": {
+            "description": "Unauthorized - Login required"
           },
           "404": {
             "description": "Review not found"
@@ -294,13 +673,18 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
       },
       "delete": {
         "tags": [
           "Reviews"
         ],
-        "description": "Delete a review by its MongoDB ObjectId",
+        "description": "Delete a review by its MongoDB ObjectId (Requires authentication)",
         "parameters": [
           {
             "name": "id",
@@ -308,6 +692,11 @@
             "required": true,
             "type": "string",
             "description": "Review ObjectId (24 hex characters)"
+          },
+          {
+            "name": "origin",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -317,17 +706,55 @@
           "400": {
             "description": "Invalid review ID format"
           },
+          "401": {
+            "description": "Unauthorized - Login required"
+          },
           "404": {
             "description": "Review not found"
           },
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
       }
     }
   },
   "definitions": {
+    "RegisterUser": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "example": "moviebuff"
+        },
+        "email": {
+          "type": "string",
+          "example": "moviebuff@example.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "securePassword123"
+        }
+      }
+    },
+    "LoginUser": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "moviebuff@example.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "securePassword123"
+        }
+      }
+    },
     "Movie": {
       "type": "object",
       "properties": {
