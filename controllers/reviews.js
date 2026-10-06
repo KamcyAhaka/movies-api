@@ -91,12 +91,16 @@ const createReview = async (req, res) => {
       });
     }
 
+    const user = (req.session && req.session.user) || req.user;
+
     const newReview = {
       movieId,
       reviewerName: reviewerName.trim(),
       rating: Number(rating),
       comment: comment.trim(),
       reviewDate: reviewDate.trim(),
+      userId: user ? (user.id || user._id || null) : null,
+      createdBy: user ? (user.username || user.displayName || user.email) : reviewerName.trim(),
       createdAt: new Date(),
     };
 
@@ -189,9 +193,50 @@ const deleteReview = async (req, res) => {
   }
 };
 
+// GET /reviews/user/my-reviews - Protected: retrieve reviews submitted by currently logged-in user
+const getMyReviews = async (req, res) => {
+  try {
+    const user = (req.session && req.session.user) || req.user;
+    if (!user) {
+      return res.status(401).json({
+        error: 'Unauthorized',
+        message: 'You must be logged in to view your reviews',
+      });
+    }
+
+    const userId = user.id || user._id;
+    const username = user.username || user.displayName;
+
+    const queryConditions = [];
+    if (userId) {
+      queryConditions.push({ userId: userId.toString() });
+    }
+    if (username) {
+      queryConditions.push({ reviewerName: username });
+      queryConditions.push({ createdBy: username });
+    }
+
+    const query = queryConditions.length > 0 ? { $or: queryConditions } : {};
+
+    const reviews = await mongodb
+      .getDb()
+      .collection(COLLECTION_NAME)
+      .find(query)
+      .toArray();
+
+    res.status(200).json({
+      message: `Retrieved ${reviews.length} reviews for user ${username || userId}`,
+      reviews,
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to retrieve user reviews', details: err.message });
+  }
+};
+
 module.exports = {
   getAll,
   getSingle,
+  getMyReviews,
   createReview,
   updateReview,
   deleteReview,

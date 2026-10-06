@@ -3,26 +3,47 @@ const swaggerAutogen = require('swagger-autogen')();
 const doc = {
   info: {
     title: 'Movies & Reviews API',
-    description: 'CSE341 Web Services API for managing movies and reviews with MongoDB',
-    version: '1.0.0',
+    description: 'CSE341 Web Services API for managing movies and reviews with MongoDB and OAuth authentication',
+    version: '2.0.0',
   },
   host: process.env.HOST || 'movies-api-j8pw.onrender.com',
   schemes: ['https', 'http'],
   tags: [
     {
       name: 'Home',
-      description: 'Root endpoint',
+      description: 'Root endpoint and status',
+    },
+    {
+      name: 'Authentication',
+      description: 'OAuth 2.0 and local bcrypt account endpoints',
     },
     {
       name: 'Movies',
-      description: 'Operations on the movies collection (9 attributes)',
+      description: 'Operations on the movies collection (Protected write/update/delete)',
     },
     {
       name: 'Reviews',
-      description: 'Operations on the reviews collection',
+      description: 'Operations on the reviews collection (Protected write/update/delete)',
     },
   ],
+  securityDefinitions: {
+    cookieAuth: {
+      type: 'apiKey',
+      in: 'header',
+      name: 'Cookie',
+      description: 'Connect.sid session cookie obtained by authenticating via /login or /auth/login',
+    },
+  },
   definitions: {
+    RegisterUser: {
+      username: 'moviebuff',
+      email: 'moviebuff@example.com',
+      password: 'securePassword123',
+    },
+    LoginUser: {
+      email: 'moviebuff@example.com',
+      password: 'securePassword123',
+    },
     Movie: {
       title: 'Inception',
       director: 'Christopher Nolan',
